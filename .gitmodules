@@ -1,0 +1,3 @@
+[submodule "examples/hapi"]
+	path = examples/hapi
+	url = https://github.com/tjmasterson/hapi.git
