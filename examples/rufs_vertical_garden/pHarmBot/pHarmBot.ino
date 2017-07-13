@@ -104,7 +104,7 @@ void setup() {
 
   i2cSetup();
   oneWireSetup();
-//  flowSetup();
+  //  flowSetup();
 
 } // setup
 
@@ -115,9 +115,9 @@ void loop() {
   debouncePin(phDoserBtn); // read tankHigh switch
 
   switch (systemMode) {
-     case NORMAL: normalMode(); break;
-     case FILLTANK: fillTankMode(); break;
-     default: normalMode(); break;
+    case NORMAL: normalMode(); break;
+    case FILLTANK: fillTankMode(); break;
+    default: normalMode(); break;
   }
 
 } // loop
@@ -126,13 +126,13 @@ void normalMode()
 {
   if (pumpMode == AUTO) pumpControl();
   if (phDoserState == HIGH || phDoseMl > 0) checkPhDoser();
-/*
-  if (phDoseMl == 0 && phDoserBtn.pinStable == HIGH && phDoserBtn.pinState == LOW)    // pushed manual dose
-  {
-    phDoseMl = 3;
-    checkPhDoser();
-  }
-*/
+  /*
+    if (phDoseMl == 0 && phDoserBtn.pinStable == HIGH && phDoserBtn.pinState == LOW)    // pushed manual dose
+    {
+      phDoseMl = 3;
+      checkPhDoser();
+    }
+  */
 } // normalMode
 
 void checkPhDoser()
@@ -160,7 +160,7 @@ void checkWaterTemp()
   if (checkTimer(waterTempTimer) == HIGH) {
     getWaterTemp();
     waterTempTimer = setSecondsTimer(waterTempSampleRate);
-//    Serial.print("sample temp \n");
+    //    Serial.print("sample temp \n");
   }
 } //checkWaterTemp
 
@@ -172,18 +172,18 @@ void pumpControl()
     digitalWrite(pumpPin, pumpState);
     pumpTimer = millis();
   } else { // water in tank
-      if (checkTimer(pumpTimer) == HIGH) {
-        pumpState = !pumpState;
-        if (pumpState == HIGH) Serial.println("Pump On");
-        if (pumpState == LOW) Serial.println("Pump Off");
-        digitalWrite(pumpPin, pumpState);
-        if (pumpState == HIGH) {
-            pumpTimer = setMinutesTimer(pumpOnTime);
-         } else {
-            pumpTimer = setMinutesTimer(pumpOffTime);
-         }
+    if (checkTimer(pumpTimer) == HIGH) {
+      pumpState = !pumpState;
+      if (pumpState == HIGH) Serial.println("Pump On");
+      if (pumpState == LOW) Serial.println("Pump Off");
+      digitalWrite(pumpPin, pumpState);
+      if (pumpState == HIGH) {
+        pumpTimer = setMinutesTimer(pumpOnTime);
+      } else {
+        pumpTimer = setMinutesTimer(pumpOffTime);
       }
     }
+  }
 }  // pumpControl
 
 void fillTankMode()
@@ -198,7 +198,7 @@ void fillTankMode()
     digitalWrite(waterFillPin, waterFillState); //  turn on water fill valve
     Serial.print("Water low\n");
   } else {
-      Serial.print("Filling tank\n");
+    Serial.print("Filling tank\n");
   }
 } // fillTankMode
 
@@ -206,28 +206,32 @@ unsigned long setMinutesTimer(int waitTime)
 {
   unsigned long endTime;
 
-   endTime = millis() + (waitTime * 60000);  // convert back to milliseconds from minutes
-   return endTime;
+  endTime = millis() + (waitTime * 60000);  // convert back to milliseconds from minutes
+  return endTime;
 } // setMinutesTimer
 
 unsigned long setSecondsTimer(int waitTime)
 {
   unsigned long endTime;
 
-   endTime = millis() + (waitTime * 1000);  // convert back to milliseconds from seconds
-   return endTime;
+  endTime = millis() + (waitTime * 1000);  // convert back to milliseconds from seconds
+  return endTime;
 } // setSecondsTimer
 
 int checkTimer(unsigned long timer)
 {
-   if (millis() > timer) {return HIGH;}
-   else {return LOW;}
+  if (millis() > timer) {
+    return HIGH;
+  }
+  else {
+    return LOW;
+  }
 } // checkTimer
 
 void debouncePin(DEBOUNCE_DEF& target) {
   long debounceDelay = 50;    // the debounce time; increase if the output flickers
 
-   // read the state of the pin into a local variable:
+  // read the state of the pin into a local variable:
   int reading = digitalRead(target.pin);
 
   // check to see if pin state has changed and you've waited
@@ -236,14 +240,18 @@ void debouncePin(DEBOUNCE_DEF& target) {
     // reset the debouncing timer
     target.lastDebounceTime = millis();
     target.pinStable = LOW;
-        if (target.pinOldState == LOW) {target.pinOldState = HIGH;} else {target.pinOldState = LOW;}
- }
+    if (target.pinOldState == LOW) {
+      target.pinOldState = HIGH;
+    } else {
+      target.pinOldState = LOW;
+    }
+  }
 
   if ((millis() - target.lastDebounceTime) > debounceDelay) {
     // whatever the reading is at, it's been there for longer
     // than the debounce delay, so take it as the actual current state:
-	  target.pinStable = HIGH;
-   }
+    target.pinStable = HIGH;
+  }
   target.pinState = reading;
 } // debouncePin
 
@@ -264,11 +272,11 @@ void flowSetup() //
 
 void flowMeter()
 {
-// reading liquid flow rate using Seeeduino and Water Flow Sensor from Seeedstudio.com
-// Code adapted by Charles Gantt from PC Fan RPM code written by Crenn @thebestcasescenario.com
-// http:/themakersworkbench.com http://thebestcasescenario.com http://seeedstudio.com
+  // reading liquid flow rate using Seeeduino and Water Flow Sensor from Seeedstudio.com
+  // Code adapted by Charles Gantt from PC Fan RPM code written by Crenn @thebestcasescenario.com
+  // http:/themakersworkbench.com http://thebestcasescenario.com http://seeedstudio.com
 
-int Calc;
+  int Calc;
 
   if (checkTimer(flowTimer) == HIGH) {// Wait 1 second
     cli();                            // Disable interrupts
@@ -293,14 +301,14 @@ int Calc;
 void i2cSetup() {
   EEPROM.write(I2CID, 0x8);
   // set default i2c ID if not yet defined
- // if (EEPROM.read(I2CID)==0) { EEPROM.write(I2CID, 0x4); }
+  // if (EEPROM.read(I2CID)==0) { EEPROM.write(I2CID, 0x4); }
 
- // initialize i2c as slave
- Wire.begin(8);
+  // initialize i2c as slave
+  Wire.begin(8);
 
- // define callbacks for i2c communication
- Wire.onReceive(i2cCommand);
- Wire.onRequest(myRequest);
+  // define callbacks for i2c communication
+  Wire.onReceive(i2cCommand);
+  Wire.onRequest(myRequest);
 } // i2cSetup
 
 byte i2cResponse[32];
@@ -311,10 +319,10 @@ void myRequest() {    // callback for sending data
   ++index;
 }
 
-void i2cCommand(int byteCount){ // callback for received data
+void i2cCommand(int byteCount) { // callback for received data
   unsigned char received;
-//  int cmdCnt;
-//  int command;
+  //  int cmdCnt;
+  //  int command;
   int output;
 
   cmdCnt = Wire.available();
@@ -327,13 +335,15 @@ void i2cCommand(int byteCount){ // callback for received data
         if (cmdCnt == 2 ) {     // next byte is the mode
           pumpMode = Wire.read();
           switch (pumpMode) {
-            case ON: if (tankLowSensor.pinStable == HIGH && tankLowSensor.pinState == LOW) {pumpState = HIGH; } break;
+            case ON: if (tankLowSensor.pinStable == HIGH && tankLowSensor.pinState == LOW) {
+                pumpState = HIGH;
+              } break;
             case OFF: pumpState = LOW; break;
-           }
-           digitalWrite(pumpPin, pumpState);
-           Serial.print("Pump state = ");
-           Serial.print(pumpState);
-           Serial.print("\n");
+          }
+          digitalWrite(pumpPin, pumpState);
+          Serial.print("Pump state = ");
+          Serial.print(pumpState);
+          Serial.print("\n");
         }
         break;
 
@@ -344,8 +354,8 @@ void i2cCommand(int byteCount){ // callback for received data
           received = Wire.read();
           output = output + received; // add in low byte
           pumpOnTime = output;      // ON time in seconds
-  Serial.print("Pump auto ON time = ");
-  Serial.println(pumpOnTime);
+          Serial.print("Pump auto ON time = ");
+          Serial.println(pumpOnTime);
         }
         break;
 
@@ -356,24 +366,28 @@ void i2cCommand(int byteCount){ // callback for received data
           received = Wire.read();
           output = output + received; // add in low byte
           pumpOnTime = output;      // OFF time in seconds
-  Serial.print("Pump auto OFF time = ");
-  Serial.println(pumpOffTime);
-       }
+          Serial.print("Pump auto OFF time = ");
+          Serial.println(pumpOffTime);
+        }
         break;
 
       case 4:    // set water Fill Value Mode (Off, On, Auto)
         if (cmdCnt == 2 ) {    // next byte is the mode
           waterFillMode = Wire.read();
           switch (waterFillMode) {
-            case ON: if (tankHighSensor.pinStable == HIGH && tankHighSensor.pinState == HIGH) {waterFillState = HIGH; } break; // only on if not full
+            case ON: if (tankHighSensor.pinStable == HIGH && tankHighSensor.pinState == HIGH) {
+                waterFillState = HIGH;
+              } break; // only on if not full
             case OFF: waterFillState = LOW;  break;
-            case AUTO: if (tankHighSensor.pinStable == HIGH && tankHighSensor.pinState == LOW) {waterFillState = LOW; } break; // turn off if full
+            case AUTO: if (tankHighSensor.pinStable == HIGH && tankHighSensor.pinState == LOW) {
+                waterFillState = LOW;
+              } break; // turn off if full
           }
           digitalWrite(waterFillPin, waterFillState);
-  Serial.print("water Fill Mode = ");
-  Serial.println(waterFillMode);
+          Serial.print("water Fill Mode = ");
+          Serial.println(waterFillMode);
         }
-         break;
+        break;
 
       case 5:    // turn on phDoser for x seconds
         if (cmdCnt == 2 ) {    // next byte is the number of seconds
@@ -391,15 +405,15 @@ void i2cCommand(int byteCount){ // callback for received data
         break;
 
       case 8:
-          i2cRequest();
-          index = 0;
-          break;
+        i2cRequest();
+        index = 0;
+        break;
 
-       default:
-         Serial.print("Command not supported ");
-         Serial.println(command);
-         break;
-   } // end switch
+      default:
+        Serial.print("Command not supported ");
+        Serial.println(command);
+        break;
+    } // end switch
   } // end if cmdCnt
 
 } // ic2Command
@@ -414,57 +428,67 @@ void i2cRequest() {    // callback for sending data
   byte refillStatus = 0;
   byte waterTempSettings = 0;
 
-    pumpStatus = (pumpMode << 6) | (pumpState << 5);
-    if (tankHighSensor.pinState == LOW) { waterLevel = 2; } // Full
-    else if (tankLowSensor.pinState == HIGH) { waterLevel = 0;} // Low
-    else { waterLevel = 1;}  // Adequate
-    waterLevel = waterLevel << 3;
-    refillStatus = (waterFillMode << 1) | waterFillState;
+  pumpStatus = (pumpMode << 6) | (pumpState << 5);
+  if (tankHighSensor.pinState == LOW) {
+    waterLevel = 2;  // Full
+  }
+  else if (tankLowSensor.pinState == HIGH) {
+    waterLevel = 0; // Low
+  }
+  else {
+    waterLevel = 1; // Adequate
+  }
+  waterLevel = waterLevel << 3;
+  refillStatus = (waterFillMode << 1) | waterFillState;
 
-    i2cResponse[i2cResponseLen] = pumpStatus | waterLevel | refillStatus;
-    i2cResponseLen++;
+  i2cResponse[i2cResponseLen] = pumpStatus | waterLevel | refillStatus;
+  i2cResponseLen++;
 
-    if (currentTime < pumpTimer) {transitionTime = pumpTimer - currentTime;} else {transitionTime = 0;}
-    transitionTime = transitionTime / 60000;  // convert to minutes
-    i2cResponse[i2cResponseLen] = (byte)(transitionTime >> 8); // high byte
-    i2cResponseLen++;
+  if (currentTime < pumpTimer) {
+    transitionTime = pumpTimer - currentTime;
+  } else {
+    transitionTime = 0;
+  }
+  transitionTime = transitionTime / 60000;  // convert to minutes
+  i2cResponse[i2cResponseLen] = (byte)(transitionTime >> 8); // high byte
+  i2cResponseLen++;
 
-    i2cResponse[i2cResponseLen] = (byte)transitionTime; // low byte
-    i2cResponseLen++;
+  i2cResponse[i2cResponseLen] = (byte)transitionTime; // low byte
+  i2cResponseLen++;
 
-    i2cResponse[i2cResponseLen] = (byte)(pumpOnTime >> 8); // high byte in minutes
-    i2cResponseLen++;
-    i2cResponse[i2cResponseLen] = (byte)pumpOnTime; // low byte
-    i2cResponseLen++;
+  i2cResponse[i2cResponseLen] = (byte)(pumpOnTime >> 8); // high byte in minutes
+  i2cResponseLen++;
+  i2cResponse[i2cResponseLen] = (byte)pumpOnTime; // low byte
+  i2cResponseLen++;
 
-    i2cResponse[i2cResponseLen] = (byte)(pumpOffTime >> 8); // high byte in minutes
-    i2cResponseLen++;
-    i2cResponse[i2cResponseLen] = (byte)pumpOffTime; // low byte
-    i2cResponseLen++;
+  i2cResponse[i2cResponseLen] = (byte)(pumpOffTime >> 8); // high byte in minutes
+  i2cResponseLen++;
+  i2cResponse[i2cResponseLen] = (byte)pumpOffTime; // low byte
+  i2cResponseLen++;
 
-    fillInterval = fillInterval / 60000;             // convert to minutes
-    i2cResponse[i2cResponseLen] = (byte)(fillInterval >> 8);  // high byte
-    i2cResponseLen++;
-    i2cResponse[i2cResponseLen] = (byte)fillInterval;  // low byte
-    i2cResponseLen++;
+  fillInterval = fillInterval / 60000;             // convert to minutes
+  i2cResponse[i2cResponseLen] = (byte)(fillInterval >> 8);  // high byte
+  i2cResponseLen++;
+  i2cResponse[i2cResponseLen] = (byte)fillInterval;  // low byte
+  i2cResponseLen++;
 
-    i2cResponse[i2cResponseLen] = (byte)(flowMeterCnt >> 8); // high byte
-    i2cResponseLen++;
-    i2cResponse[i2cResponseLen] = (byte)flowMeterCnt; // low byte
-    i2cResponseLen++;
+  i2cResponse[i2cResponseLen] = (byte)(flowMeterCnt >> 8); // high byte
+  i2cResponseLen++;
+  i2cResponse[i2cResponseLen] = (byte)flowMeterCnt; // low byte
+  i2cResponseLen++;
 
-    i2cResponse[i2cResponseLen] = (byte)(waterTempMSB);  // left of decimal byte
-    i2cResponseLen++;
-    i2cResponse[i2cResponseLen] = (byte)(waterTempLSB);  // right if decimal byte
-    i2cResponseLen++;
+  i2cResponse[i2cResponseLen] = (byte)(waterTempMSB);  // left of decimal byte
+  i2cResponseLen++;
+  i2cResponse[i2cResponseLen] = (byte)(waterTempLSB);  // right if decimal byte
+  i2cResponseLen++;
 
-    i2cResponse[i2cResponseLen] = waterTempTarget;  // byte
-    i2cResponseLen++;
+  i2cResponse[i2cResponseLen] = waterTempTarget;  // byte
+  i2cResponseLen++;
 
-    i2cResponse[i2cResponseLen] = waterTempDelta;  // byte
-    i2cResponseLen++;    // compensate for zero based array 24
- /*
-  Wire.write(i2cResponse, i2cResponseLen);
+  i2cResponse[i2cResponseLen] = waterTempDelta;  // byte
+  i2cResponseLen++;    // compensate for zero based array 24
+  /*
+    Wire.write(i2cResponse, i2cResponseLen);
   */
 } // i2cRequest
 
@@ -480,8 +504,8 @@ void oneWireSetup()
   // Start up the library
   sensors.begin();
   sensors.setResolution(waterThermometer, 10); // set the resolution to 10 bit (good enough?)
-//  sensors.setResolution(outsideThermometer, 10);
-//  sensors.setResolution(dogHouseThermometer, 10);
+  //  sensors.setResolution(outsideThermometer, 10);
+  //  sensors.setResolution(dogHouseThermometer, 10);
 } // oneWireSetup
 
 float getTemperature(DeviceAddress deviceAddress)
@@ -512,7 +536,7 @@ void getWaterTemp()
 
   rightPart = modf(tempF, &leftPart);
   waterTempMSB = (byte)leftPart;
-  newRight = rightPart*10;
+  newRight = rightPart * 10;
   rightPart = modf(newRight, &leftPart);
   waterTempLSB = (byte)leftPart;
 }  // getWaterTemp
